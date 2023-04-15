@@ -42,18 +42,18 @@ dependencies {
     implementation("com.github.papsign:Ktor-OpenAPI-Generator:0.2-beta.20")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8") // needed for multipart parsing
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.8") // needed for Optional<> parsing
-    implementation("org.webjars:swagger-ui:3.25.0")
+    implementation("org.webjars:swagger-ui:4.1.3")
     implementation("org.reflections:reflections:0.9.11") // only used while initializing
 
     implementation("at.favre.lib:bcrypt:0.9.0")
 
-    implementation("org.postgresql:postgresql:42.2.12")
+    implementation("org.postgresql:postgresql:42.2.27")
 
     implementation("org.jetbrains.exposed:exposed:0.17.13")
     implementation("com.zaxxer:HikariCP:2.7.8")
-    implementation("org.flywaydb:flyway-core:5.2.4")
+    implementation("org.flywaydb:flyway-core:6.5.5")
 
-    implementation("com.squareup.retrofit2:retrofit:2.3.0")
+    implementation("com.squareup.retrofit2:retrofit:2.5.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.3.0")
     implementation("com.squareup.retrofit2:adapter-rxjava2:2.3.0")
     implementation("com.squareup.okhttp3:logging-interceptor:3.10.0")

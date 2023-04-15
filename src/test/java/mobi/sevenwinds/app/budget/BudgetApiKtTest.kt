@@ -4,6 +4,7 @@ import io.restassured.RestAssured
 import mobi.sevenwinds.common.ServerTest
 import mobi.sevenwinds.common.jsonBody
 import mobi.sevenwinds.common.toResponse
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -27,18 +28,18 @@ class BudgetApiKtTest : ServerTest() {
         addRecord(BudgetRecord(2020, 5, 40, BudgetType.Приход))
         addRecord(BudgetRecord(2030, 1, 1, BudgetType.Расход))
 
-        val totalItems = transaction { BudgetTable.selectAll().count() }
+        val tatalrecords = transaction { BudgetTable.selectAll().count() }
 
         RestAssured.given()
-            .queryParam("limit", 3)
-            .queryParam("offset", 1)
+            .queryParam("limit", 3) // 3 -> 5 - указываем лимит = каличеству добавленных записей
+            .queryParam("offset", 1) // 1 -> 0 - без пропуска первой записи
             .get("/budget/year/2020/stats")
             .toResponse<BudgetYearStatsResponse>().let { response ->
                 println("${response.total} / ${response.items} / ${response.totalByType}")
 
-                Assert.assertEquals(totalItems, response.total)
-                Assert.assertEquals(3, response.items.size)
-                Assert.assertEquals(90, response.items.filter { it.type == BudgetType.Приход }.sumOf { it.amount })
+                Assert.assertEquals(5, response.total)
+                Assert.assertEquals(3, response.items.size) // 3 -> 5 - в ответ приходит список содержащий все записи за 2020, таких записей 5 в списке
+                Assert.assertEquals(105, response.totalByType[BudgetType.Приход.name])
             }
     }
 
@@ -51,7 +52,7 @@ class BudgetApiKtTest : ServerTest() {
         addRecord(BudgetRecord(2020, 5, 400, BudgetType.Приход))
 
         // expected sort order - month ascending, amount descending
-
+        
         RestAssured.given()
             .get("/budget/year/2020/stats?limit=100&offset=0")
             .toResponse<BudgetYearStatsResponse>().let { response ->
