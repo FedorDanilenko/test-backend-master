@@ -31,14 +31,14 @@ class BudgetApiKtTest : ServerTest() {
         val tatalrecords = transaction { BudgetTable.selectAll().count() }
 
         RestAssured.given()
-            .queryParam("limit", 3) // 3 -> 5 - указываем лимит = каличеству добавленных записей
-            .queryParam("offset", 1) // 1 -> 0 - без пропуска первой записи
+            .queryParam("limit", 3)
+            .queryParam("offset", 1)
             .get("/budget/year/2020/stats")
             .toResponse<BudgetYearStatsResponse>().let { response ->
                 println("${response.total} / ${response.items} / ${response.totalByType}")
 
                 Assert.assertEquals(5, response.total)
-                Assert.assertEquals(3, response.items.size) // 3 -> 5 - в ответ приходит список содержащий все записи за 2020, таких записей 5 в списке
+                Assert.assertEquals(3, response.items.size)
                 Assert.assertEquals(105, response.totalByType[BudgetType.Приход.name])
             }
     }
@@ -52,7 +52,7 @@ class BudgetApiKtTest : ServerTest() {
         addRecord(BudgetRecord(2020, 5, 400, BudgetType.Приход))
 
         // expected sort order - month ascending, amount descending
-        
+
         RestAssured.given()
             .get("/budget/year/2020/stats?limit=100&offset=0")
             .toResponse<BudgetYearStatsResponse>().let { response ->
