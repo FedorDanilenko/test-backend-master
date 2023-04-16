@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
 object AuthorService {
-    suspend fun addRecord(body: AuthorResponse): AuthorResponse = withContext(Dispatchers.IO) {
+    suspend fun addRecord(body: AuthorRecord): AuthorResponse = withContext(Dispatchers.IO) {
         transaction {
             val entity = AuthorEntity.new {
                 this.fio = body.fio

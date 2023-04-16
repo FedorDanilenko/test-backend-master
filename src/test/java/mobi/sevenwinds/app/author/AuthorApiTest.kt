@@ -16,7 +16,6 @@ class AuthorApiTest : ServerTest() {
 
     @BeforeEach
     internal fun setUp() {
-//        RestAssured.defaultParser = Parser.JSON
         transaction { AuthorTable.deleteAll() }
     }
 
