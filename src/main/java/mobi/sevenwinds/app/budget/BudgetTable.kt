@@ -13,7 +13,7 @@ object BudgetTable : IntIdTable("budget") {
     val month = integer("month")
     val amount = integer("amount")
     val type = enumerationByName("type", 100, BudgetType::class)
-    val author = reference("author_id", AuthorTable).nullable()
+    val author = reference("author_id", AuthorTable).nullable() // добавление в budget колонки с id автора (может быть пустым)
 }
 
 class BudgetEntity(id: EntityID<Int>) : IntEntity(id) {
@@ -23,13 +23,13 @@ class BudgetEntity(id: EntityID<Int>) : IntEntity(id) {
     var month by BudgetTable.month
     var amount by BudgetTable.amount
     var type by BudgetTable.type
-    var author by AuthorEntity optionalReferencedOn BudgetTable.author
+    var author by AuthorEntity optionalReferencedOn BudgetTable.author // связсь AuthorTable и BudgetTable
 
 
     fun toResponse(): BudgetResponse {
         return BudgetResponse(year, month, amount, type,
             author?.fio,
-            author?.dataCreated?.toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"))
+            author?.dataCreated?.toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")) // Добавление в ответ данныых автора, если он есть
         )
     }
 }

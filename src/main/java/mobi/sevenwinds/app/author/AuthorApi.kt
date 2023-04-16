@@ -14,10 +14,12 @@ fun NormalOpenAPIRoute.author() {
     }
 }
 
+// данные для добавления автора
 data class AuthorRecord (
     val fio : String
 )
 
+// данные для получения данных от сервера
 data class AuthorResponse(
     val id: Int,
     val fio: String,

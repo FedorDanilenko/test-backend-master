@@ -21,7 +21,7 @@ class AuthorEntity(id: EntityID<Int>) : IntEntity(id) {
         return AuthorResponse(
             id.value,
             fio,
-            dataCreated.toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"))
+            dataCreated.toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")) // перевод данных в нужный формат
         )
     }
 

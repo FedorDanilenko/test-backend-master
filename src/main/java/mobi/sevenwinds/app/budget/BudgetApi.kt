@@ -30,10 +30,10 @@ data class BudgetRecord(
     @Min(1) @Max(12) val month: Int,
     @Min(1) val amount: Int,
     val type: BudgetType,
-    val authorId : Int? = null,
+    val authorId : Int? = null, // добавление id автора
 )
 
-// Create class for response for safe
+// новый класс для ответов
 data class BudgetResponse (
     val year: Int,
     val month: Int,
@@ -47,7 +47,7 @@ data class BudgetYearParam(
     @PathParam("Год") val year: Int,
     @QueryParam("Лимит пагинации") val limit: Int,
     @QueryParam("Смещение пагинации") val offset: Int,
-    @QueryParam("Имя автора") val fio: String?
+    @QueryParam("Имя автора") val fio: String? // параметр для фильтра по имени автора
 
 )
 

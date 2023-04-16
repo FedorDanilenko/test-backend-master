@@ -13,13 +13,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object BudgetService {
     suspend fun addRecord(body: BudgetRecord): BudgetResponse = withContext(Dispatchers.IO) {
         transaction {
-            val author = AuthorEntity.find { AuthorTable.id eq body.authorId }.firstOrNull()
             val entity = BudgetEntity.new {
                 this.year = body.year
                 this.month = body.month
                 this.amount = body.amount
                 this.type = body.type
-                this.author = author
+                this.author = AuthorEntity.find { AuthorTable.id eq body.authorId }.firstOrNull() // Добавить автора записи если был указан его id
             }
 
             return@transaction entity.toResponse()
@@ -42,8 +41,8 @@ object BudgetService {
                 .run { BudgetEntity.wrapRows(this) }
 
 
-            val total = query.count() // подсчет общего количества
-            val data = query.limit(param.limit, param.offset).map { it.toResponse() } // Записи для текущей страницы
+            val total = query.count() // подсчет общего количества записей
+            val data = query.limit(param.limit, param.offset).map { it.toResponse() } // Записи для текущей страницы (пагинация)
 
             val sumByType = query.groupBy { it.type.name }.mapValues { it.value.sumOf { v -> v.amount } } // Сумма для каждого типа записи
 
