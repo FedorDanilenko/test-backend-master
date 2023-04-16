@@ -41,9 +41,9 @@ class AuthorApiTest : ServerTest() {
             .toResponse<BudgetYearStatsResponse>().let { response ->
                 println("${response.total} / ${response.items} / ${response.totalByType} ")
 
-                Assert.assertEquals("Mr. Wight", response.items)
-                Assert.assertEquals("Jesse", response.items)
-                Assert.assertEquals(105, response.totalByType[BudgetType.Приход.name])
+                Assert.assertEquals("Mr. Wight", response.items[0].authorName)
+                Assert.assertEquals("Jesse", response.items[1].authorName)
+                Assert.assertEquals(70, response.totalByType[BudgetType.Расход.name])
             }
     }
 
