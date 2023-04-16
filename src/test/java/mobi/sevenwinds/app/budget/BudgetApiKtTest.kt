@@ -14,10 +14,10 @@ import org.junit.jupiter.api.Test
 
 class BudgetApiKtTest : ServerTest() {
 
-    @BeforeEach
-    internal fun setUp() {
-        transaction { BudgetTable.deleteAll() }
-    }
+//    @BeforeEach
+//    internal fun setUp() {
+//        transaction { BudgetTable.deleteAll() }
+//    }
 
     @Test
     fun testBudgetPagination() {
@@ -26,9 +26,7 @@ class BudgetApiKtTest : ServerTest() {
         addRecord(BudgetRecord(2020, 5, 20, BudgetType.Приход))
         addRecord(BudgetRecord(2020, 5, 30, BudgetType.Приход))
         addRecord(BudgetRecord(2020, 5, 40, BudgetType.Приход))
-        addRecord(BudgetRecord(2030, 1, 1, BudgetType.Расход))
-
-        val tatalrecords = transaction { BudgetTable.selectAll().count() }
+        addRecord(BudgetRecord(2030, 1, 1, BudgetType.Комиссия))
 
         RestAssured.given()
             .queryParam("limit", 3)
