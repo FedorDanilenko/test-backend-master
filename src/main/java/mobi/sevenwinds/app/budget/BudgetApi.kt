@@ -39,7 +39,7 @@ data class BudgetResponse (
     val month: Int,
     val amount: Int,
     val type: BudgetType,
-    val authorName: String?,
+    val fio: String?,
     val authorCreationDate: String?
 )
 
@@ -47,7 +47,7 @@ data class BudgetYearParam(
     @PathParam("Год") val year: Int,
     @QueryParam("Лимит пагинации") val limit: Int,
     @QueryParam("Смещение пагинации") val offset: Int,
-    @QueryParam("Имя автора") val authorName: String?
+    @QueryParam("Имя автора") val fio: String?
 
 )
 

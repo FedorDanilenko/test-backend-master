@@ -1,11 +1,7 @@
 package mobi.sevenwinds.app.author
 
 import io.restassured.RestAssured
-import io.restassured.parsing.Parser
-import mobi.sevenwinds.app.budget.BudgetRecord
-import mobi.sevenwinds.app.budget.BudgetTable
-import mobi.sevenwinds.app.budget.BudgetType
-import mobi.sevenwinds.app.budget.BudgetYearStatsResponse
+import mobi.sevenwinds.app.budget.*
 import mobi.sevenwinds.common.ServerTest
 import mobi.sevenwinds.common.jsonBody
 import mobi.sevenwinds.common.toResponse
@@ -41,9 +37,53 @@ class AuthorApiTest : ServerTest() {
             .toResponse<BudgetYearStatsResponse>().let { response ->
                 println("${response.total} / ${response.items} / ${response.totalByType} ")
 
-                Assert.assertEquals("Mr. Wight", response.items[0].authorName)
-                Assert.assertEquals("Jesse", response.items[1].authorName)
+                Assert.assertEquals("Mr. Wight", response.items[0].fio)
+                Assert.assertEquals("Jesse", response.items[1].fio)
                 Assert.assertEquals(70, response.totalByType[BudgetType.Расход.name])
+            }
+    }
+
+    @Test
+    fun filterAuthor () {
+        addAuthor(AuthorRecord("Mr. Wight"))    // id 1
+        addAuthor(AuthorRecord("Jesse"))        // id 2
+        addAuthor(AuthorRecord("Soul Goodman")) // id 3
+        addAuthor(AuthorRecord("Gus"))          // id 4
+
+        addRecord(BudgetRecord(2019, 5, 100, BudgetType.Расход, 2))
+        addRecord(BudgetRecord(2020, 5, 50, BudgetType.Приход, 1))
+        addRecord(BudgetRecord(2021, 4, 20, BudgetType.Расход, 2))
+        addRecord(BudgetRecord(2020, 2, 10, BudgetType.Приход, 4))
+        addRecord(BudgetRecord(2020, 8, 120, BudgetType.Приход, 1))
+        addRecord(BudgetRecord(2020, 1, 60, BudgetType.Расход, 1))
+        addRecord(BudgetRecord(2020, 10, 80, BudgetType.Расход, 3))
+        addRecord(BudgetRecord(2020, 12, 90, BudgetType.Расход, 4))
+        addRecord(BudgetRecord(2022, 3, 10, BudgetType.Расход, 4))
+
+        RestAssured.given()
+            .queryParam("fio","mr. WiGhT") // провека ввода с разным регистром
+            .queryParam("limit", 100)
+            .queryParam("offset", 0)
+            .get("/budget/year/2020/stats")
+            .toResponse<BudgetYearStatsResponse>().let { response ->
+                println("${response.total} / ${response.items} / ${response.totalByType} ")
+
+                Assert.assertEquals(3, response.total) // у Mr. Wight должно быть 3 записи за 20й год
+                Assert.assertEquals("Mr. Wight", response.items[0].fio) // проверка фильтра
+                Assert.assertEquals(170, response.totalByType[BudgetType.Приход.name])
+            }
+
+        RestAssured.given()
+            .queryParam("fio","gus") // провека ввода с разным регистром
+            .queryParam("limit", 100)
+            .queryParam("offset", 0)
+            .get("/budget/year/2020/stats")
+            .toResponse<BudgetYearStatsResponse>().let { response ->
+                println("${response.total} / ${response.items} / ${response.totalByType} ")
+
+                Assert.assertEquals(2, response.total) // у Gus должно быть 2 записи за 20й год
+                Assert.assertEquals("Gus", response.items[0].fio) // проверка фильтра
+                Assert.assertEquals(10, response.totalByType[BudgetType.Приход.name])
             }
     }
 
@@ -51,12 +91,11 @@ class AuthorApiTest : ServerTest() {
         RestAssured.given()
             .jsonBody(record)
             .post("/budget/add")
-            .toResponse<BudgetRecord>().let { response ->
+            .toResponse<BudgetResponse>().let { response ->
                 Assert.assertEquals(record.year, response.year)
                 Assert.assertEquals(record.month, response.month)
                 Assert.assertEquals(record.amount, response.amount)
                 Assert.assertEquals(record.type, response.type)
-                Assert.assertEquals(record.authorId, response.authorId)
             }
     }
 

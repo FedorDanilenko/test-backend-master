@@ -6,6 +6,7 @@ import mobi.sevenwinds.app.author.AuthorEntity
 import mobi.sevenwinds.app.author.AuthorTable
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.andWhere
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -27,17 +28,18 @@ object BudgetService {
 
     suspend fun getYearStats(param: BudgetYearParam): BudgetYearStatsResponse = withContext(Dispatchers.IO) {
         transaction {
-            val query = (BudgetTable leftJoin AuthorTable)
-                .select{ BudgetTable.year eq param.year } // Выбор записи с нужным годом
-//                .also { query ->
-//                    param.authorName?.let {
-//                        query.andWhere {
-//                            AuthorTable.fio.
-//                        }
-//                    }
-//                }
+            var baseQuery = (BudgetTable leftJoin AuthorTable)
+                .select { BudgetTable.year eq param.year } // Выбор записи с нужным годом
+
+
+            if (!param.fio.isNullOrBlank()) { // если передано ФИО автора, то добавляем фильтр
+                baseQuery = baseQuery.andWhere {AuthorTable.fio.lowerCase() like "%${param.fio!!.toLowerCase()}%"
+                }
+            }
+
+            val query = baseQuery
                 .orderBy(BudgetTable.month to SortOrder.ASC, BudgetTable.amount to SortOrder.DESC) //Сортировка
-                .run { BudgetEntity.wrapRows(this) } //Преобразование строк в сущности
+                .run { BudgetEntity.wrapRows(this) }
 
 
             val total = query.count() // подсчет общего количества

@@ -79,8 +79,11 @@ class BudgetApiKtTest : ServerTest() {
         RestAssured.given()
             .jsonBody(record)
             .post("/budget/add")
-            .toResponse<BudgetRecord>().let { response ->
-                Assert.assertEquals(record, response)
+            .toResponse<BudgetResponse>().let { response ->
+                Assert.assertEquals(record.year, response.year)
+                Assert.assertEquals(record.month, response.month)
+                Assert.assertEquals(record.amount, response.amount)
+                Assert.assertEquals(record.type, response.type)
             }
     }
 }
