@@ -4,9 +4,7 @@ import io.restassured.RestAssured
 import mobi.sevenwinds.common.ServerTest
 import mobi.sevenwinds.common.jsonBody
 import mobi.sevenwinds.common.toResponse
-import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.deleteAll
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.Assert
 import org.junit.jupiter.api.BeforeEach
@@ -14,10 +12,10 @@ import org.junit.jupiter.api.Test
 
 class BudgetApiKtTest : ServerTest() {
 
-//    @BeforeEach
-//    internal fun setUp() {
-//        transaction { BudgetTable.deleteAll() }
-//    }
+    @BeforeEach
+    internal fun setUp() {
+        transaction { BudgetTable.deleteAll() }
+    }
 
     @Test
     fun testBudgetPagination() {
