@@ -29,21 +29,26 @@ data class BudgetRecord(
     @Min(1900) val year: Int,
     @Min(1) @Max(12) val month: Int,
     @Min(1) val amount: Int,
-    val type: BudgetType
+    val type: BudgetType,
+    val authorId : Int? = null
 )
 
 data class BudgetYearParam(
     @PathParam("Год") val year: Int,
     @QueryParam("Лимит пагинации") val limit: Int,
     @QueryParam("Смещение пагинации") val offset: Int,
+    @QueryParam("Имя автора") val authorName: String?
+
 )
 
 class BudgetYearStatsResponse(
     val total: Int,
     val totalByType: Map<String, Int>,
-    val items: List<BudgetRecord>
+    val items: List<BudgetRecord>,
+//    val authorName: String?,
+//    val authorCreationDate: String?
 )
 
 enum class BudgetType {
-    Приход, Расход, Комиссия
+    Приход, Расход
 }

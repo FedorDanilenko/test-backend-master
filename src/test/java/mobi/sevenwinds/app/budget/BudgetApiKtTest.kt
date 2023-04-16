@@ -24,7 +24,7 @@ class BudgetApiKtTest : ServerTest() {
         addRecord(BudgetRecord(2020, 5, 20, BudgetType.Приход))
         addRecord(BudgetRecord(2020, 5, 30, BudgetType.Приход))
         addRecord(BudgetRecord(2020, 5, 40, BudgetType.Приход))
-        addRecord(BudgetRecord(2030, 1, 1, BudgetType.Комиссия))
+        addRecord(BudgetRecord(2030, 1, 1, BudgetType.Расход))
 
         RestAssured.given()
             .queryParam("limit", 3)
