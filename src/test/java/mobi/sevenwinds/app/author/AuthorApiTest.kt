@@ -17,8 +17,9 @@ class AuthorApiTest : ServerTest() {
     @BeforeEach
     internal fun setUp() {
         transaction {
-//            AuthorTable.deleteAll()
             BudgetTable.deleteAll()
+            AuthorTable.deleteAll()
+            exec("ALTER SEQUENCE author_id_seq RESTART WITH 1")// сброс счетчика id в таблице author
         }
     }
 
