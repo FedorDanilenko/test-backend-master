@@ -33,10 +33,18 @@ class AuthorApiTest : ServerTest() {
         addAuthor(AuthorRecord("Soul Goodman"))
 
         addRecord(BudgetRecord(2020, 4, 40, BudgetType.Расход))
-        addRecord(BudgetRecord(2021, 1, 50, BudgetType.Приход, 1))
-        addRecord(BudgetRecord(2021, 3, 30, BudgetType.Расход, 2))
+        addRecord(BudgetRecord(2020, 1, 50, BudgetType.Приход, 1))
+        addRecord(BudgetRecord(2020, 3, 30, BudgetType.Расход, 2))
 
+        RestAssured.given()
+            .get("/budget/year/2020/stats?limit=100&offset=0")
+            .toResponse<BudgetYearStatsResponse>().let { response ->
+                println("${response.total} / ${response.items} / ${response.totalByType} ")
 
+                Assert.assertEquals("Mr. Wight", response.items)
+                Assert.assertEquals("Jesse", response.items)
+                Assert.assertEquals(105, response.totalByType[BudgetType.Приход.name])
+            }
     }
 
     private fun addRecord(record: BudgetRecord) {
@@ -44,7 +52,11 @@ class AuthorApiTest : ServerTest() {
             .jsonBody(record)
             .post("/budget/add")
             .toResponse<BudgetRecord>().let { response ->
-                Assert.assertEquals(record, response)
+                Assert.assertEquals(record.year, response.year)
+                Assert.assertEquals(record.month, response.month)
+                Assert.assertEquals(record.amount, response.amount)
+                Assert.assertEquals(record.type, response.type)
+                Assert.assertEquals(record.authorId, response.authorId)
             }
     }
 
